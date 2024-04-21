@@ -14,8 +14,9 @@ datasource db {
 }
 
 model user {
-  pk          String @id
+  pk          String   @id
   userName    String
-  displayName String @default("Guest")
+  displayName String?  @default("Guest")
   password    String
+  isSearching Boolean? @default(false)
 }

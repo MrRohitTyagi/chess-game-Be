@@ -9,6 +9,15 @@ import jwt from "jsonwebtoken";
 const router = Router();
 const secret = "XXX_CHESS_APP";
 
+const getuserPyload = ({
+  userName,
+  displayName,
+  password,
+  pk,
+  isSearching,
+}) => {
+  return { userName, displayName, password, pk, isSearching };
+};
 export const user_fields_tO_send = { displayName: true, name: true, pk: true };
 
 router.post("/create", async (req, res) => {
@@ -36,13 +45,13 @@ router.delete("/delete/:pk", async (req, res) => {
 
 router.put("/update/:pk", async (req, res) => {
   const { pk } = req.params;
-  const { name } = req.body;
+  const body = req.body;
   try {
     const user = await client.user.update({
       where: { pk: pk },
-      data: { name: name },
+      data: getuserPyload(body),
     });
-    res.json({ success: true, response: user });
+    res.json({ success: true, response: user, body });
   } catch (error) {
     getError(error, res);
   }
