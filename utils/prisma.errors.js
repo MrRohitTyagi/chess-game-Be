@@ -14,6 +14,5 @@ export const getError = (error, res) => {
 };
 
 function capitalize(str = "") {
-  console.log("str", str);
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
 }

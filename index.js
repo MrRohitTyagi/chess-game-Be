@@ -30,9 +30,8 @@ app.use(errorMiddleware);
 
 // Socket code
 io.on("connection", (socket) => {
-  console.log("socket.id", socket.id);
-  socket.emit("CONNECTION_SUCCESSFULL", socket.id);
 
+  socket.emit("CONNECTION_SUCCESSFULL", socket.id);
   socket.on("FIND_RANDOM_SEARCHING_PLAYERS", async (e) => {
     const users = await client.user.findFirst({
       where: {
@@ -40,8 +39,16 @@ io.on("connection", (socket) => {
         AND: { pk: { not: { equals: e.user_pk } } },
       },
     });
-    console.log("searchingplayers");
     socket.emit("PLAYERS_SEARCHING_FOR_GAME", users);
+  });
+
+  socket.on("JOIN_ROOM", (room_id) => {
+    socket.join(room_id);
+  });
+
+  socket.on("MOVE_PLAYED", (data) => {
+    const { room_id } = data;
+    socket.to(room_id).emit("OPPONENT_PLAYED", data);
   });
 });
 
