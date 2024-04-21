@@ -19,6 +19,12 @@ const io = new Server(httpServer);
 app.use("/api/v1/user", userRouter);
 
 app.get("/", (req, res) => res.send("Hello"));
+app.get("/all", async (req, res) => {
+  try {
+    const users = await client.user.findMany();
+    res.send(users);
+  } catch (error) {}
+});
 
 app.all("*", (req, res, next) => {
   const err = new Error(`Can't find ${req.originalUrl} on the server`);
@@ -30,7 +36,6 @@ app.use(errorMiddleware);
 
 // Socket code
 io.on("connection", (socket) => {
-
   socket.emit("CONNECTION_SUCCESSFULL", socket.id);
   socket.on("FIND_RANDOM_SEARCHING_PLAYERS", async (e) => {
     const users = await client.user.findFirst({
