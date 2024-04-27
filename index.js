@@ -1,11 +1,18 @@
 import express from "express";
-import userRouter from "./routes/user.routes.js";
-import cors from "cors";
-import "dotenv/config";
-import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import cors from "cors";
+import "dotenv/config";
+
+//prisma imports
 import client from "./config/prisma.client.js";
+
+// routes import
+import userRouter from "./routes/user.routes.js";
+import authRouter from "./routes/auth.routes.js";
+
+//middlewares
+import { errorMiddleware } from "./middlewares/error.middleware.js";
 
 const app = express();
 app.use(cors({ origin: "*" }));
@@ -17,13 +24,18 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/auth", authRouter);
 
 app.get("/", (req, res) => res.send("Hello"));
+
 app.get("/all", async (req, res) => {
   try {
-    const users = await client.user.findMany();
-    res.send(users);
-  } catch (error) {}
+    const products = await client.product.findMany({ where: {} });
+
+    res.send({ products: products });
+  } catch (error) {
+    console.log("error", error);
+  }
 });
 
 app.all("*", (req, res, next) => {

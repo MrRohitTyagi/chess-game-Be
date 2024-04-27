@@ -3,11 +3,8 @@ import client from "../config/prisma.client.js";
 
 import { applyFilters } from "../utils/utils.js";
 import { getError } from "../utils/prisma.errors.js";
-import { v4 as uuidV4 } from "uuid";
-import jwt from "jsonwebtoken";
 
 const router = Router();
-const secret = "XXX_CHESS_APP";
 
 const getuserPyload = ({
   userName,
@@ -20,19 +17,6 @@ const getuserPyload = ({
 };
 export const user_fields_tO_send = { displayName: true, name: true, pk: true };
 
-router.post("/create", async (req, res) => {
-  const { userName, displayName, password } = req.body;
-  const pk = uuidV4();
-  try {
-    const user = await client.user.create({
-      data: { userName, displayName, password, pk },
-    });
-    const token = jwt.sign(user, secret);
-    res.json({ success: true, response: user, token });
-  } catch (error) {
-    getError(error, res);
-  }
-});
 router.delete("/delete/:pk", async (req, res) => {
   const { pk } = req.params;
   try {

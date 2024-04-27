@@ -20,3 +20,10 @@ model user {
   password    String
   isSearching Boolean? @default(false)
 }
+
+model product {
+  pk     String  @id @default(uuid())
+  name   String?
+  price  Int?    @default(1100)
+  rating Int?
+}
